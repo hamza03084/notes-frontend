@@ -71,7 +71,6 @@ const SelectInput = ({
               value={selectedOption}
               onChange={(selectedOption) => {
                 if (rest?.isMulti) {
-                  // For multi-select, extract an array of values
                   onChange(
                     selectedOption
                       ? selectedOption.map((item) => item.value)
