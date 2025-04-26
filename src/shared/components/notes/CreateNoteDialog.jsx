@@ -72,15 +72,7 @@ export default function CreateNoteDialog({open, onClose, onSubmit, editNote}) {
             fullWidth
             required
           />
-          <TextInput
-            control={control}
-            label="Content"
-            name="content"
-            placeholder="Enter note content"
-            multiline
-            rows={4}
-            fullWidth
-          />
+
           <SelectInput
             control={control}
             label="Tags"
@@ -88,6 +80,16 @@ export default function CreateNoteDialog({open, onClose, onSubmit, editNote}) {
             placeholder="Choose Tags"
             isMulti={true}
             options={tagOptions}
+            fullWidth
+          />
+
+          <TextInput
+            control={control}
+            label="Content"
+            name="content"
+            placeholder="Enter note content"
+            multiline
+            rows={4}
             fullWidth
           />
         </DialogContent>
