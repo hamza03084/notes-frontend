@@ -3,31 +3,18 @@
 import {useEffect, useState} from 'react';
 import {
   Container,
-  Typography,
   Box,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
-  IconButton,
   CircularProgress,
   Paper,
-  Chip,
-  Divider,
-  Tooltip,
   useTheme,
   alpha,
-  Grow,
 } from '@mui/material';
 import useApi from '@/shared/hooks/useApi';
 import {toast} from 'react-hot-toast';
-import {FaEdit, FaTrash, FaPlus} from 'react-icons/fa';
-import {TAG_COLORS} from '@/shared/constants/notes';
 import CreateNoteDialog from '@/shared/components/notes/CreateNoteDialog';
 import ConfirmDeleteDialog from '@/shared/components/notes/ConfirmDeleteDialog';
-
-// Tag color mapping
+import NotesList from '@/shared/components/notes/NotesList';
+import NotesHeader from '@/shared/components/notes/NotesHeader';
 
 export default function NotesPage() {
   const theme = useTheme();
@@ -71,7 +58,7 @@ export default function NotesPage() {
           body: data,
         });
 
-        setNotes([newNote, ...notes]);
+        setNotes([...notes, newNote]);
         toast.success('Note created successfully');
       }
       setOpen(false);
@@ -125,149 +112,23 @@ export default function NotesPage() {
             backdropFilter: 'blur(10px)',
           }}
         >
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            mb={3}
-          >
-            <Typography
-              variant="h4"
-              sx={{
-                fontWeight: 'bold',
-                background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              My Notes
-            </Typography>
-            <Button
-              variant="contained"
-              startIcon={<FaPlus />}
-              onClick={() => {
-                setOpen(true);
-                setEditNote(null);
-              }}
-              sx={{
-                borderRadius: 8,
-                px: 3,
-                background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
-                '&:hover': {
-                  background:
-                    'linear-gradient(45deg, #1976D2 30%, #0CA8F6 90%)',
-                },
-              }}
-            >
-              Add Note
-            </Button>
-          </Box>
+          <NotesHeader
+            onAdd={() => {
+              setOpen(true);
+              setEditNote(null);
+            }}
+          />
 
           {loading ? (
             <Box display="flex" justifyContent="center" py={6}>
               <CircularProgress />
             </Box>
           ) : (
-            <Grid container spacing={3}>
-              {notes.map((note, index) => (
-                <Grid item xs={12} sm={6} md={4} key={note._id}>
-                  <Grow in={true} timeout={(index + 1) * 200}>
-                    <Card
-                      sx={{
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        borderRadius: 2,
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          transform: 'translateY(-4px)',
-                          boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
-                        },
-                      }}
-                    >
-                      <CardContent sx={{flexGrow: 1}}>
-                        <Typography
-                          variant="h6"
-                          gutterBottom
-                          sx={{
-                            fontWeight: 'bold',
-                            display: '-webkit-box',
-                            WebkitLineClamp: 1,
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden',
-                          }}
-                        >
-                          {note.title}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{
-                            mb: 2,
-                            display: '-webkit-box',
-                            WebkitLineClamp: 3,
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden',
-                          }}
-                        >
-                          {note.content}
-                        </Typography>
-                        {note.tags?.length > 0 && (
-                          <Box display="flex" flexWrap="wrap" gap={0.5} mt={1}>
-                            {note.tags.map((tag) => (
-                              <Chip
-                                key={tag}
-                                label={tag}
-                                size="small"
-                                sx={{
-                                  bgcolor:
-                                    TAG_COLORS[tag] || TAG_COLORS.default,
-                                  color: '#fff',
-                                  fontSize: '0.7rem',
-                                  height: 24,
-                                }}
-                              />
-                            ))}
-                          </Box>
-                        )}
-                      </CardContent>
-                      <Divider />
-                      <CardActions sx={{justifyContent: 'flex-end', p: 1}}>
-                        <Tooltip title="Edit" arrow>
-                          <IconButton
-                            onClick={() => handleEdit(note)}
-                            size="small"
-                            sx={{
-                              color: theme.palette.primary.main,
-                              '&:hover': {
-                                bgcolor: alpha(theme.palette.primary.main, 0.1),
-                              },
-                            }}
-                          >
-                            <FaEdit size={16} />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Delete" arrow>
-                          <IconButton
-                            size="small"
-                            color="error"
-                            onClick={() => setConfirmDeleteId(note._id)}
-                            sx={{
-                              '&:hover': {
-                                bgcolor: alpha(theme.palette.error.main, 0.1),
-                              },
-                            }}
-                          >
-                            <FaTrash size={16} />
-                          </IconButton>
-                        </Tooltip>
-                      </CardActions>
-                    </Card>
-                  </Grow>
-                </Grid>
-              ))}
-            </Grid>
+            <NotesList
+              notes={notes}
+              onEdit={handleEdit}
+              onDelete={(id) => setConfirmDeleteId(id)}
+            />
           )}
         </Paper>
       </Container>
