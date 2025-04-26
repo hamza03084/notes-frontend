@@ -16,8 +16,11 @@ import {
 } from '@mui/material';
 import useApi from '@/shared/hooks/useApi';
 import toast from 'react-hot-toast';
+import {useRouter} from 'next/navigation';
 
 export default function LoginPage() {
+  const router = useRouter();
+
   const {
     control,
     handleSubmit,
@@ -41,9 +44,9 @@ export default function LoginPage() {
       });
       toast.success(result?.message || 'Login successful!');
       if (result?.userInfo)
-        localStorage.setItem('userInfo', JSON.stringify(result.userInfo));
+        localStorage.setItem('user', JSON.stringify(result.userInfo));
 
-      // Optional: redirect or store token
+      router.push('/'); // Redirect to home page after successful login
     } catch (err) {
       const errorMsg =
         err.response?.data?.message || err.message || 'Something went wrong';

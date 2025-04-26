@@ -1,7 +1,7 @@
 import {useId} from 'react';
 import {Controller} from 'react-hook-form';
 import Select from 'react-select';
-import {FormControl, InputLabel, FormHelperText} from '@mui/material';
+import {FormControl, FormHelperText} from '@mui/material';
 
 const customStyles = {
   control: (base, state) => ({
@@ -11,8 +11,9 @@ const customStyles = {
     '&:hover': {
       borderColor: '#3f51b5',
     },
-    minHeight: 40,
-    fontSize: 14,
+    minHeight: 56, // match MUI TextField height
+    fontSize: 16,
+    paddingLeft: 2,
   }),
   option: (base, state) => ({
     ...base,
@@ -44,26 +45,56 @@ const SelectInput = ({
     <Controller
       control={control}
       name={name}
-      render={({field: {value, onChange}, fieldState: {error}}) => (
-        <FormControl fullWidth margin="normal" error={!!error}>
-          {label && (
-            <InputLabel shrink htmlFor={id}>
-              {label}
-            </InputLabel>
-          )}
-          <Select
-            inputId={id}
-            instanceId={id}
-            value={options?.find((option) => option.value === value) || null}
-            onChange={(selectedOption) => onChange(selectedOption?.value)}
-            options={options}
-            placeholder={placeholder}
-            styles={customStyles}
-            {...rest}
-          />
-          {error && <FormHelperText>{error.message}</FormHelperText>}
-        </FormControl>
-      )}
+      render={({field: {value, onChange}, fieldState: {error}}) => {
+        // For multi-select, find all options that match the values in the array
+        // For single-select, find the option that matches the value
+        const selectedOption = rest?.isMulti
+          ? options?.filter((option) => value?.includes(option.value))
+          : options?.find((option) => option.value === value);
+
+        return (
+          <FormControl fullWidth margin="normal">
+            {label && (
+              <div
+                style={{
+                  fontSize: '0.75rem',
+                  color: 'rgba(0, 0, 0, 0.6)',
+                  marginBottom: 4,
+                  marginLeft: 2,
+                }}
+              >
+                {label}
+              </div>
+            )}
+            <Select
+              instanceId={id}
+              value={selectedOption}
+              onChange={(selectedOption) => {
+                if (rest?.isMulti) {
+                  // For multi-select, extract an array of values
+                  onChange(
+                    selectedOption
+                      ? selectedOption.map((item) => item.value)
+                      : []
+                  );
+                } else {
+                  // For single-select, extract the single value
+                  onChange(selectedOption?.value);
+                }
+              }}
+              options={options}
+              placeholder={placeholder}
+              styles={customStyles}
+              {...rest}
+            />
+            {error && (
+              <FormHelperText error style={{marginLeft: 2}}>
+                {error.message}
+              </FormHelperText>
+            )}
+          </FormControl>
+        );
+      }}
     />
   );
 };

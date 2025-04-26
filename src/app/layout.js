@@ -3,6 +3,7 @@ import {ThemeProvider} from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from '@/shared/theme';
 import {Toaster} from 'react-hot-toast';
+import AuthGuard from '@/shared/components/authGuard';
 
 export const metadata = {
   title: 'Create Next App',
@@ -16,7 +17,7 @@ export default function RootLayout({children}) {
         <AppRouterCacheProvider options={{enableCssLayer: true}}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            {children}
+            <AuthGuard>{children}</AuthGuard>
             <Toaster position="top-right" reverseOrder={false} />
           </ThemeProvider>
         </AppRouterCacheProvider>

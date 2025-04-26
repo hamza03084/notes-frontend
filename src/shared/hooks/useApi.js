@@ -7,7 +7,7 @@ const useApi = () => {
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
 
-  const callApi = async ({url, method = 'GET', body = null}) => {
+  const callApi = async ({url, method = 'GET', body}) => {
     setLoading(true);
     setError(null);
     setData(null);

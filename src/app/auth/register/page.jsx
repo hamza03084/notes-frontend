@@ -44,12 +44,10 @@ export default function RegisterPage() {
         body: data,
       });
       toast.success(result?.message || 'Registration successful!');
-      console.log('Register Success:', result);
     } catch (err) {
       const errorMsg =
         err.response?.data?.message || err.message || 'Something went wrong';
       toast.error(errorMsg);
-      console.error('Register failed:', err);
     }
   };
 
